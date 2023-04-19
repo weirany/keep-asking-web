@@ -129,7 +129,16 @@ function KeepAsking() {
             </div>
             <div className="alert alert-secondary text-start mt-3 mb-3 mx-auto">
               <ol>
-                <li>The OpenAI key is stored locally in your browser.</li>
+                <li>
+                  The{" "}
+                  <a
+                    href="https://platform.openai.com/account/api-keys"
+                    target="_blank"
+                  >
+                    OpenAI key
+                  </a>{" "}
+                  is stored locally in your browser.
+                </li>
                 <li>
                   This app utilizes ChatGPT, which may generate inaccurate
                   information about people, places, or facts.
