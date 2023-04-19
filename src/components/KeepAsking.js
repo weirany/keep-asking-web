@@ -126,20 +126,20 @@ function KeepAsking() {
               >
                 Use Key
               </button>
-              <div className="alert alert-secondary text-start mt-3 mb-3 mx-auto">
-                <ol>
-                  <li>The OpenAI key is stored locally in your browser.</li>
-                  <li>
-                    This app utilizes ChatGPT, which may generate inaccurate
-                    information about people, places, or facts.
-                  </li>
-                </ol>
-              </div>
+            </div>
+            <div className="alert alert-secondary text-start mt-3 mb-3 mx-auto">
+              <ol>
+                <li>The OpenAI key is stored locally in your browser.</li>
+                <li>
+                  This app utilizes ChatGPT, which may generate inaccurate
+                  information about people, places, or facts.
+                </li>
+              </ol>
             </div>
           </div>
         </div>
       ) : (
-        <div>
+        <div className="row mt-4">
           {Object.keys(currentQuestion).length > 0 && (
             <div>
               <div className="row mt-4">
