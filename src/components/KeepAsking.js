@@ -9,6 +9,7 @@ function KeepAsking() {
   const [inputKey, setInputKey] = useState("");
   const [savedKey, setSavedKey] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [rootQuestion, setRootQuestion] = useState({});
   const [currentQuestion, setCurrentQuestion] = useState({});
   const [isAsking, setIsAsking] = useState(false);
 
@@ -21,6 +22,7 @@ function KeepAsking() {
 
   const handleStartOverButtonClick = () => {
     setInputValue("");
+    setRootQuestion({});
     setCurrentQuestion({});
     setIsAsking(false);
   };
@@ -66,6 +68,13 @@ function KeepAsking() {
     setIsAsking(false);
   };
 
+  const handleStepBackClick = async () => {
+    const parentQuestion = rootQuestion.getParentQuestionOf(
+      currentQuestion.questionId
+    );
+    setCurrentQuestion(parentQuestion);
+  };
+
   const askQuestion = async (questionId) => {
     let targetQuestion;
 
@@ -76,7 +85,9 @@ function KeepAsking() {
       newQuestion.questionText = inputValue;
 
       // if currentQuestion is empty, it means we are asking a new question
-      if (Object.keys(currentQuestion).length !== 0) {
+      if (Object.keys(currentQuestion).length === 0) {
+        setRootQuestion(newQuestion);
+      } else {
         currentQuestion.addToMoreQuestionsInBulk([newQuestion.questionText]);
       }
       targetQuestion = newQuestion;
@@ -84,18 +95,24 @@ function KeepAsking() {
       targetQuestion = currentQuestion.getQuestion(questionId);
     }
 
-    targetQuestion.answerText = await getAnswer(
-      savedKey,
-      targetQuestion.questionText,
-      currentQuestion
-    );
+    // get answer and more questions, only if the question is not asked before
+    if (
+      targetQuestion.answerText === "" ||
+      targetQuestion.moreQuestions.length === 0
+    ) {
+      targetQuestion.answerText = await getAnswer(
+        savedKey,
+        targetQuestion.questionText,
+        currentQuestion
+      );
 
-    const moreQuestionTexts = await getMoreQuestions(
-      savedKey,
-      targetQuestion.questionText,
-      targetQuestion.answerText
-    );
-    targetQuestion.addToMoreQuestionsInBulk(moreQuestionTexts);
+      const moreQuestionTexts = await getMoreQuestions(
+        savedKey,
+        targetQuestion.questionText,
+        targetQuestion.answerText
+      );
+      targetQuestion.addToMoreQuestionsInBulk(moreQuestionTexts);
+    }
 
     setCurrentQuestion(targetQuestion);
     setInputValue("");
@@ -134,6 +151,7 @@ function KeepAsking() {
                   <a
                     href="https://platform.openai.com/account/api-keys"
                     target="_blank"
+                    rel="noopener noreferrer"
                   >
                     OpenAI key
                   </a>{" "}
@@ -151,6 +169,17 @@ function KeepAsking() {
         <div className="row mt-4">
           {Object.keys(currentQuestion).length > 0 && (
             <div>
+              {rootQuestion.getParentQuestionOf(currentQuestion.questionId) && (
+                <div className="text-start flex-grow-1">
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleStepBackClick}
+                  >
+                    ← Step Back
+                  </button>
+                </div>
+              )}
+
               <div className="row mt-4">
                 <div className="col">
                   <div className="card text-bg-light">
@@ -228,7 +257,7 @@ function KeepAsking() {
                   type="button"
                   onClick={handleStartOverButtonClick}
                 >
-                  Start Over with a New Question
+                  ↺ Start Over with a New Question
                 </button>
               </div>
             </div>
@@ -240,7 +269,7 @@ function KeepAsking() {
                 type="button"
                 onClick={handleClearSavedKeyButtonClick}
               >
-                Clear Saved OpenAI Key
+                ✕ Clear Saved OpenAI Key
               </button>
             </div>
           </div>

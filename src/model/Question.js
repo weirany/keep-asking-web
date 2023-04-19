@@ -33,4 +33,22 @@ export default class Question {
     newQuestion.questionText = questionText;
     this.moreQuestions.push(newQuestion);
   }
+
+  getParentQuestionOf(questionId) {
+    if (this.questionId === questionId) {
+      return null;
+    } else {
+      for (const question of this.moreQuestions) {
+        if (question.questionId === questionId) {
+          return this;
+        } else {
+          const foundQuestion = question.getParentQuestionOf(questionId);
+          if (foundQuestion) {
+            return foundQuestion;
+          }
+        }
+      }
+    }
+    return null;
+  }
 }
