@@ -1,0 +1,10 @@
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.disable-hover-active:hover,
+.disable-hover-active:active {
+  background-color: inherit !important;
+  color: inherit !important;
+  box-shadow: none !important;
+}
